@@ -1,5 +1,7 @@
 util
 primitives
 frame
+lib
+game
 events
 init.js
