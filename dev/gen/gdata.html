@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+    <head>
+     <script src='../../src/util/b64.js' type='text/javascript'></script>
+        <script type='text/javascript'>
+            var str = "";
+            
+            function init() {
+                xopen("data");
+                xopen("gobs");
+                xopen("test");
+                for (var i = 0; i < 20; i++) {
+                    xopen(getUID());
+                    // It's going to use the binary boolean 110000 for info and node
+                    xopen("info");
+                    xadd("color:" + b64.to(Math.floor(Math.random() * 0xFFFFFF), 4));
+                    xclose();
+                    xopen("node");
+                    xadd("x:" + b64.to(Math.floor(Math.random() * 4096), 2));
+                    xadd("y:" + b64.to(Math.floor(Math.random() * 4096), 2));
+                    xadd("z:" + b64.to(Math.floor(Math.random() * 4096), 2));
+                    xclose(2);
+                }
+                xclose(3);
+            }
+            
+            var xmlOpen = [];
+            var xmlLevel = 0;
+            function xopen(s) {
+                str += xIndents() + "<" + s + ">" + "\n";
+                xmlLevel++;
+                xmlOpen.push(s);
+            }
+            
+            function xclose(no) {
+                xmlLevel--;
+                str += xIndents() + "</" + xmlOpen.pop() + ">\n";
+                if (no > 1) {
+                    xclose(no - 1);
+                }
+            }
+            
+            function xIndents() {
+                var i = "";
+                while(i.length < xmlLevel){
+                    i += "\t";   
+                }
+                return i;
+            }
+            
+            function xadd(s) {
+                str += xIndents() + s + "\n";
+            }
+            var lastUID = 0;
+            
+            function getUID() {
+                return b64.to(lastUID++, 4);
+            }
+            window.onload = function(){
+                init();
+                document.write("<textarea>"+str+"</textarea>");
+            };
+        </script>
+    </head>
+    <body>
+        
+    </body>
+</html>

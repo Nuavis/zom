@@ -1,0 +1,28 @@
+<data>
+    <gobs>
+		<test>
+			<fields>
+				<info>
+					color:color
+				</info>
+				<node>
+					x:int
+					y:int
+					z:int
+				</node>
+			</fields>
+			<children>
+				<0000>
+					<info>
+						color:2ruw
+					</info>
+					<node>
+						x:TU
+						y:F7
+						z:tR
+					</node>
+				</0000>
+			</children>
+		</test>
+	</gobs>
+</data>

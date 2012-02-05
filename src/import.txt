@@ -1,7 +1,7 @@
 util
-primitives
 frame
 lib
+primitives
 game
 events
 init.js

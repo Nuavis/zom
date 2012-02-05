@@ -1,9 +1,10 @@
 function init(){
-    console.log("Initializing Game");
+    lg("Initializing Game");
     //initFrame();
+    //setInterval(update,1000/60);
+    //setInterval(render,1000/60);
     initGame();
-    setInterval(update,1000/60);
-    setInterval(render,1000/60);
+    addEvents();
 }
 function update(){
     for (var i in frames){

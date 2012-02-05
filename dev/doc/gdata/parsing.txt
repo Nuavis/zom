@@ -1,0 +1,38 @@
+A normal uid consists of 4 64b
+
+A binary boolean is a 64b parsed so that it evaluates to 6 boolean variables, these variables indicate which fields are present
+
+type index table:
+int - 0				: 2 64b
+color - 1			: 4 64b
+
+<data>
+    <gobs>							CLASS LENGTH 4 * 64b
+		<test>						CLASS UID (4 * 64b) + BINARY BOOLEAN (64b)
+			<fields>
+				<info>				SEND LENGTH (64b)
+					color:color		PROPERTY TYPE (64b)
+				</info>
+				<node>				SEND LENGTH (64b)
+					x:int			PROPERTY TYPE (64b)
+					y:int			PROPERTY TYPE (64b)
+					z:int			PROPERTY TYPE (64b)
+				</node>
+			</fields>
+			<children>				SEND LENGTH (4 * 64b)
+				<0000>				SEND UID (4 * 64b) + BINARY BOOLEAN (64b)
+					<info>
+						color:2ruw	SEND VALUE
+					</info>
+					<node>
+						x:TU		SEND VALUE
+						y:F7		SEND VALUE
+						z:tR		SEND VALUE
+					</node>
+				</0000>
+			</children>
+		</test>
+	</gobs>
+</data>
+
+In this example, this would evaluate to:
