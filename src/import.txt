@@ -4,4 +4,5 @@ lib
 primitives
 game
 events
+connection
 init.js

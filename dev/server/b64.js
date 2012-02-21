@@ -3,11 +3,11 @@ var map64 = exports.map64 =  {"0":0,"1":1,"2":2,"3":3,"4":4,"5":5,"6":6,"7":7,"8
 var to = exports.to=function(x,len){
     var str = "";
     if (x==0){
-    	return "0";
+    	str = "0";
     }
 	while (x != 0){
-		str += list64[x%64];
-		x = x>>6;
+		str = list64[x%64] + str;
+		x = x >> 6;
 	}
     while (str.length<len || 0){
     	str = "0" + str;
@@ -46,10 +46,10 @@ exports.frbin = function(str){
     return ar;
 };
 var fr = exports.fr=function(str){
-	var x=0,cb = 0;
+	var x=0,cb = 6 * str.length;
 	for (var i = 0,len = str.length;i<len;i++){
 		x += map64[str[i]] << cb;
-		cb += 6;
+		cb -= 6;
 	}
 	return x;
 };

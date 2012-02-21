@@ -36,3 +36,17 @@ color - 1			: 4 64b
 </data>
 
 In this example, this would evaluate to:
+
+
+Reading data back...
+
+_ _ _ _ <- Class length
+	_ _ _ _ <- Class UID
+	_ <- Binary Boolean
+		_ <- Field Length
+			_ <- Field Type
+	_ _ _ _ <- Children Length
+		_ _ _ _ <- Child UID
+		_ <- Binary Boolean
+			____ <- Value (length based on field type)
+	

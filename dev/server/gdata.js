@@ -26,8 +26,8 @@ exports.loadData = function loadData(world){//return gdata
           var obs = gobs[i].children;
           for (var q in obs){
               var ob = obs[q];
-              for (var u in cls){
-                  var prop = cls[u];//node or info
+              for (var u in cls.fields){
+                  var prop = cls.fields[u];//node or info
                   var oprop = ob[u];
                   //reformat oprop to prop format
                   for (var k in prop){
@@ -57,15 +57,18 @@ var makeRData = exports.makeRData = function(){
 		}
 		rdata += b64.tobin(ar);//CLASS BINARY BOOLEANS
 		
+		var nn = 0;
 		for (var p in cls.fields){
-			var props_length = count(cls[p]);
-			rdata += b64.to(props_length);//PROPERTY LENGTH
-			for (var t in cls[p]){
-				rdata += b64.to(types[cls[p][t]]); //PROPERTY TYPE
+			if (ar[nn]){
+				var props_length = count(cls.fields[p]);
+				rdata += b64.to(props_length);//PROPERTY LENGTH
+				for (var t in cls.fields[p]){
+					rdata += b64.to(types[cls.fields[p][t]]); //PROPERTY TYPE
+				}
 			}
+			nn++;
 		}
-		
-		var children = cls[p];
+		var children = cls.children;
 		rdata += b64.to(count(children),4);//CHILDREN LENGTH
 		
 		for (var uid in children){
@@ -73,9 +76,17 @@ var makeRData = exports.makeRData = function(){
 			var clength = count(child);
 			ar = [];
 			while(ar.length<clength){
-				ar.push()
+				ar.push(1)
+			}
+			while(ar.length<6){
+				ar.push(0);
 			}
 			rdata += uid + b64.tobin(ar);
+			for (var p in child){
+				for (var v in child[p]){
+					rdata += format[cls.fields[p][v]](child[p][v]);
+				}
+			}
 		}
 	}
 };
@@ -99,4 +110,12 @@ var parse = exports.parse = {
     color:function(col){
         return b16.to(b64.fr(col),6);
     }
-}
+};
+var format = exports.format = {
+	int:function(no){
+		return b64.to(no,2);
+	},
+	color:function(col){
+		return b64.to(b16.fr(col),4);
+	}
+};

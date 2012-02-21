@@ -1,10 +1,16 @@
 var stats, camera, scene, renderer, _;
 var rob = {};
 var my,hero;
+var conn;
 
 var D2R = Math.PI/180;
 function initGame(){
        lg("Starting Game");
+       
+       lg("Connecting to Socket Server");
+       
+       conn = getConnection();
+       conn.addListener("data",parseData);
        
        _ = THREE;
        
@@ -22,11 +28,11 @@ function initGame(){
        }
        hero = addChar();
        
-       for (i = 0;i<100;i++){
+       /*for (i = 0;i<100;i++){
             var a = addChar();
             a.p.x = Math.random()*4000-2000;
             a.p.z = Math.random()*4000-2000;
-       }
+       }*/
        
        my = {
                speed:new V3(),
@@ -69,6 +75,10 @@ function gameRender(){
 function gameLogic(){
     setTimeout(gameLogic,1000/60);
     
+    
+    conn.getMessages();
+    
+    
     //Hero Movement
     my.speed.x += (getKey("d") - getKey("a"))*my.maxspeed.x;
     my.speed.z += (getKey("s") - getKey("w"))*my.maxspeed.z;
@@ -81,6 +91,42 @@ function gameLogic(){
     camera.position.y -= (camera.position.y - (my.position.y + 300))/10;
     camera.position.z -= (camera.position.z - (my.position.z + 450))/10;
     
+}
+var classList = {};
+function parseData(data){
+	lg("Beginning Parse",data);
+	var class_length = b64.fr(data.substring(0,4));
+	lg("Class Length",class_length);
+	var ci = 4;
+	var sub = function(len){
+		ci += len;
+		return data.substring(ci-len,ci);
+	};
+	for (var i = 0;i < class_length; i ++){
+		var uid = sub(4);
+		lg("Class",i,"UID",uid);
+		var cls = classList[uid] = classList[uid] || new GameClass();
+		var binary_boolean = b64.frbin(sub(1));
+		lg("Binary Boolean : ",binary_boolean);
+		for (var i = 0,len = binary_boolean.length;i<len;i++){
+			if (binary_boolean[i]){
+				var plen = b64.fr(sub(1));
+				while(cls.properties[i].length < plen){
+					cls.properties[i].push(0);
+				}
+				lg("Property",i,"Length",plen);
+				for (var u = 0;u<plen;u++){
+					var stype = b64.fr(sub(1));
+					cls.properties[i][u] = stype;
+					lg("Sub-property",u,"type",stype);
+				}
+			}
+		}
+		//Time for children
+		var clen = b64.fr(sub(4));
+		lg("Children Length",clen);
+		
+	}
 }
 function addChar(name){
     var char = new rChar(name);

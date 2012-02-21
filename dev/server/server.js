@@ -4,7 +4,7 @@ var compile = require("./compile.js");
 var globals = require("./globals.js");
 var gdata = require("./gdata.js");
 require("./gdata.js").loadData();
-var getUID = globals.getUID();
+var getUID = globals.getUID;
 
 
 var app = http.createServer(function (req,res){
@@ -27,7 +27,7 @@ io.sockets.on('connection', function (socket) {
     socket.uid = getUID();
     clients[socket.uid] = socket;
     socket.emit('data', gdata.getData());
-    socket.on('my other event', function (data) {
+    socket.on('up', function (data) {
     	console.log(data);
     });
 });
