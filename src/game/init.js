@@ -108,8 +108,8 @@ function parseData(data){
 		var cls = classList[uid] = classList[uid] || new GameClass();
 		var binary_boolean = b64.frbin(sub(1));
 		lg("Binary Boolean : ",binary_boolean);
-		for (var i = 0,len = binary_boolean.length;i<len;i++){
-			if (binary_boolean[i]){
+		for (var k = 0,len = binary_boolean.length;k<len;k++){
+			if (binary_boolean[k]){
 				var plen = b64.fr(sub(1));
 				while(cls.properties[i].length < plen){
 					cls.properties[i].push(0);
@@ -125,7 +125,17 @@ function parseData(data){
 		//Time for children
 		var clen = b64.fr(sub(4));
 		lg("Children Length",clen);
-		
+		for (var k = 0; k< clen;k++){
+			var uid = sub(4);
+			var bbool = b64.frbin(sub(1));
+			lg("Child",i,"UID",uid,"Binary Boolean",bbool);
+			for (var u = 0;u < bbool.length ; u ++ ){
+				if (bbool[u]){
+					var tlist = cls.properties[u];
+					lg(tlist);
+				}
+			}
+		}
 	}
 }
 function addChar(name){
