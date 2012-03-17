@@ -30,4 +30,9 @@ io.sockets.on('connection', function (socket) {
     socket.on('up', function (data) {
     	console.log(data);
     });
+    socket.on('gdata', function (data) {
+    	gdata.data.gobs.test.children['0000'].node.x += 1;
+    	gdata.makeRData();
+    	socket.emit('data', gdata.getData());
+    });
 });

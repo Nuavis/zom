@@ -13,5 +13,8 @@ function getConnection(){
 		}
 		serverCache = [];
 	};
+	serverSocketConnection.send = function(ty,data){
+		socket.emit(ty,data);
+	};
 	return serverSocketConnection;
 }

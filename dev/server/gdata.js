@@ -2,6 +2,7 @@ var fs = require("fs");
 var xml = require("./xml.js");
 var b64 = require("./b64.js");
 var b16 = require("./b16.js");
+var world = require("./world.js");
 
 var data = exports.data = {};
 var rdata = exports.rdata = "";
@@ -9,7 +10,7 @@ var classes = exports.classes = {};
 exports.loadData = function loadData(world){//return gdata
       var rg = xml.loadXML("./dev/data.xml");
       
-      data = rg.data;
+      data = exports.data = rg.data;
       
       var gobs = rg.data.gobs;
       
@@ -36,8 +37,8 @@ exports.loadData = function loadData(world){//return gdata
               }
           }
       }
-      
       makeRData();
+      world.load(data);
 };
 var types = {
 	"int":0,
@@ -46,7 +47,6 @@ var types = {
 var makeRData = exports.makeRData = function(){
 	var class_length = count(data.gobs);
 	rdata = b64.to(class_length,4);//CLASS LENGTH
-	
 	for (var i in data.gobs){
 		var cls = data.gobs[i];
 		rdata += i; // CLASS UID
@@ -90,9 +90,6 @@ var makeRData = exports.makeRData = function(){
 		}
 	}
 };
-function rAddData(type,data){
-	
-}
 function count(ob){
 	var i = 0;
 	for (var u in ob){
@@ -116,6 +113,9 @@ var format = exports.format = {
 		return b64.to(no,2);
 	},
 	color:function(col){
-		return b64.to(b16.fr(col),4);
+		return b64.to(b16.fr(col)/2.43,4);
+		//2.43 is a constant that allows a
+		//64b * 4 to have the same range of colors as a
+		//16b * 6
 	}
 };

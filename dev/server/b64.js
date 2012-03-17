@@ -12,6 +12,10 @@ var to = exports.to=function(x,len){
     while (str.length<len || 0){
     	str = "0" + str;
 	}
+	//TODO (this is a safety clause)
+	if (str.length>len){
+		str = str.substring(0,len);
+	}
 	return str;
 };
 exports.mto = function(ar,len){

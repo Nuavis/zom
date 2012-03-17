@@ -10,5 +10,8 @@ var rChar = function(uid){
 rChar.prototype = {
     add:function(){
         scene.add(this.mesh);   
+    },
+    setColor:function(color){
+    	this.material = this.mesh.material = new _.MeshBasicMaterial( {color: color } );
     }
 };

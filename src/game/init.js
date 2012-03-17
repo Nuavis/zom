@@ -72,9 +72,14 @@ function gameRender(){
     stats.update();
     
 }
+var t = 0;
 function gameLogic(){
     setTimeout(gameLogic,1000/60);
     
+    if (t%10==0){
+    	console.log("Sending");
+    	conn.send("gdata","");
+    }
     
     conn.getMessages();
     
@@ -90,7 +95,7 @@ function gameLogic(){
     camera.position.x -= (camera.position.x - (my.position.x))/10;
     camera.position.y -= (camera.position.y - (my.position.y + 300))/10;
     camera.position.z -= (camera.position.z - (my.position.z + 450))/10;
-    
+    t++;
 }
 var classList = {};
 function parseData(data){
@@ -102,6 +107,7 @@ function parseData(data){
 		ci += len;
 		return data.substring(ci-len,ci);
 	};
+	var classes = [];
 	for (var i = 0;i < class_length; i ++){
 		var uid = sub(4);
 		lg("Class",i,"UID",uid);
@@ -111,13 +117,13 @@ function parseData(data){
 		for (var k = 0,len = binary_boolean.length;k<len;k++){
 			if (binary_boolean[k]){
 				var plen = b64.fr(sub(1));
-				while(cls.properties[i].length < plen){
-					cls.properties[i].push(0);
+				while(cls.properties[k].length < plen){
+					cls.properties[k].push(0);
 				}
-				lg("Property",i,"Length",plen);
+				lg("Property",k,"Length",plen);
 				for (var u = 0;u<plen;u++){
 					var stype = b64.fr(sub(1));
-					cls.properties[i][u] = stype;
+					cls.properties[k][u] = stype;
 					lg("Sub-property",u,"type",stype);
 				}
 			}
@@ -129,14 +135,55 @@ function parseData(data){
 			var uid = sub(4);
 			var bbool = b64.frbin(sub(1));
 			lg("Child",i,"UID",uid,"Binary Boolean",bbool);
+			var child = cls.children[uid] || (cls.children[uid] = addChar(getUID()));
 			for (var u = 0;u < bbool.length ; u ++ ){
 				if (bbool[u]){
+					//Let's cycle throught the child properties
+					//To find the length, we have to find what type it is
+					lg("Binary Boolean",u);
 					var tlist = cls.properties[u];
-					lg(tlist);
+					for (var w = 0;w < tlist.length; w++){
+						var prop = GameData.property(tlist[w]);
+						lg("Property",w,"Is a ",prop.name);
+						//This will have to be altered for strings later
+						var val = b64.fr(sub(prop.len));
+						//We assume all objects are chars here
+						switch(u){
+							case 0:
+								switch(w){
+									case 0:
+										//Color (remember to multiply by constant 2.43)
+										val *= 2.43;
+										child.setColor(Math.floor(val));
+										break;
+								}
+								break;
+							case 1:
+								switch(w){
+									case 0:
+										child.p.x = val;
+									break;
+									case 1:
+										child.p.y = val;
+									break;
+									case 2:
+										child.p.z = val;
+									break;
+								}
+								break;
+						}
+						
+					}
 				}
 			}
+			console.log(child);
 		}
+		classes.push(cls);
 	}
+	console.log(classes);
+}
+function getChar(uid){
+	return rob[uid] || (rob[uid] = addChar(uid));
 }
 function addChar(name){
     var char = new rChar(name);
